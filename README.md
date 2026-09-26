@@ -1,56 +1,44 @@
-# Welcome to your Expo app 👋
+# html5games launcher
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A small Expo app that lists a few free games from [html5games.com](https://html5games.com) and opens the chosen game in a full-screen WebView. It's built on the Expo default TypeScript template (SDK 57) and styled after Duolingo.
 
-## Get started
-
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Run it
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+Then press `i` for the iOS Simulator or `a` for an Android emulator, or scan the QR code with Expo Go. `react-native-webview` is bundled in Expo Go, so you don't need a development build.
 
-### Other setup steps
+## What changed from the template
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+The first commit is the untouched template, so `git diff <first commit>` shows every change.
 
-## Learn more
+| File | Change | Why |
+| --- | --- | --- |
+| `src/app/_layout.tsx` | Tabs → `Stack`, and the game screen opens as a `fullScreenModal` | The app has one list and one detail screen, so tabs add nothing. A full-screen modal is the native pattern for immersive content. |
+| `src/app/index.tsx` | A `FlatList` of games replaces the welcome content | `FlatList` virtualises its rows, so the list scales if more games are added. |
+| `src/app/game/[id].tsx` | New full-screen WebView screen | Expo Router dynamic route. It has loading, error/retry and "not found" states, plus a close button. |
+| `src/components/game-card.tsx` | New Duolingo-style card | A thick bottom border gives the "3D" look and flattens when pressed. Uses `Pressable` only, with no animation library. |
+| `src/constants/games.ts` | Typed list of games | html5games.com has no public API. Each URL is the official embed link from the game's page. |
+| `src/constants/theme.ts` | Duolingo palette, plus `primary`, `primaryShadow` and `onPrimary` tokens | Same token structure as before, so every themed component keeps working in light and dark mode. |
+| `src/components/themed-text.tsx` | Titles use `Fonts.rounded` at weight 800 | Duolingo's chunky, rounded headings, using the rounded font the template already defines (no custom font needed). |
+| Deleted | Explore tab, tab bar, and the demo components/images only they used | Unused once the tabs were gone. |
 
-To learn more about developing your project with Expo, look at the following resources:
+New dependency: `react-native-webview`, installed with `npx expo install`. `eslint` and `eslint-config-expo` were added by the template's own `npm run lint` on its first run.
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Accessibility
 
-## Join the community
+- **Contrast:** Duolingo's white-on-green (`#FFFFFF` on `#58CC02`) is only **2.09:1**, which fails WCAG AA, so buttons use dark text `#131F24` on the green (**8.05:1**). Every text colour meets 4.5:1 or better in both light and dark mode.
+- **Screen readers:** each card is a single button labelled "Play *title*" with the hint "Opens the game full screen". The thumbnail is decorative. The close button is labelled "Close game", the heading has the `header` role, and the spinner is labelled "Loading game".
+- **Touch targets:** the cards and the close button are 48pt or larger.
+- **Dynamic Type:** font scaling is left on, and text wraps rather than truncating.
+- **Dark mode:** follows the system setting, using the template's `useTheme` hook.
 
-Join our community of developers creating universal apps.
+## Known limitations
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- **iOS and Android only:** `react-native-webview` has no web implementation.
+- **Portrait only:** the template locks orientation, so I picked games that play in portrait.
+- **Consent screen:** the games are ad-supported and show html5games' GDPR consent dialog on first launch.
+- **Hardcoded list:** the game list lives in the app, since html5games.com has no public API.
