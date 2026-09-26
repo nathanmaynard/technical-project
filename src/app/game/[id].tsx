@@ -23,29 +23,6 @@ export default function GameScreen() {
     <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
       <StatusBar hidden />
 
-      {game ? (
-        <WebView
-          ref={webViewRef}
-          source={{ uri: game.url }}
-          style={styles.webView}
-          allowsInlineMediaPlayback
-          mediaPlaybackRequiresUserAction={false}
-          startInLoadingState
-          renderLoading={() => (
-            <ThemedView style={styles.centered}>
-              <ActivityIndicator size="large" color={theme.primary} accessibilityLabel="Loading game" />
-            </ThemedView>
-          )}
-          renderError={() => (
-            <Message text="Couldn't load the game. Check your connection.">
-              <Button label="Try again" onPress={() => webViewRef.current?.reload()} />
-            </Message>
-          )}
-        />
-      ) : (
-        <Message text="Sorry, we couldn't find that game." />
-      )}
-
       <Pressable
         onPress={() => router.back()}
         accessibilityRole="button"
@@ -63,6 +40,29 @@ export default function GameScreen() {
           weight="bold"
         />
       </Pressable>
+
+      {game ? (
+        <WebView
+          ref={webViewRef}
+          source={{ uri: game.url }}
+          style={styles.webView}
+          allowsInlineMediaPlayback
+          mediaPlaybackRequiresUserAction={false}
+          startInLoadingState
+          renderLoading={() => (
+            <ThemedView style={styles.centered}>
+              <ActivityIndicator size="large" color={theme.primaryShadow} accessibilityLabel="Loading game" />
+            </ThemedView>
+          )}
+          renderError={() => (
+            <Message text="Couldn't load the game. Check your connection.">
+              <Button label="Try again" onPress={() => webViewRef.current?.reload()} />
+            </Message>
+          )}
+        />
+      ) : (
+        <Message text="Sorry, we couldn't find that game." />
+      )}
     </View>
   );
 }
@@ -116,6 +116,7 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     position: 'absolute',
+    zIndex: 1,
     left: Spacing.three,
     width: 48,
     height: 48,
