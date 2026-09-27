@@ -1,18 +1,23 @@
+import { useState } from 'react';
 import { FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { GameCard } from '@/components/game-card';
+import { GenreFilter } from '@/components/genre-filter';
 import { ThemedText } from '@/components/themed-text';
 import { ThemedView } from '@/components/themed-view';
-import { Games } from '@/constants/games';
+import { Games, type Genre } from '@/constants/games';
 import { MaxContentWidth, Spacing } from '@/constants/theme';
 
 export default function HomeScreen() {
+  const [genre, setGenre] = useState<Genre | null>(null);
+  const games = genre ? Games.filter((game) => game.genre === genre) : Games;
+
   return (
     <ThemedView style={styles.container}>
       <SafeAreaView style={styles.safeArea}>
         <FlatList
-          data={Games}
+          data={games}
           keyExtractor={(game) => game.id}
           renderItem={({ item }) => <GameCard game={item} />}
           contentContainerStyle={styles.list}
@@ -24,6 +29,7 @@ export default function HomeScreen() {
               <ThemedText themeColor="textSecondary">
                 Games sourced from html5games.com
               </ThemedText>
+              <GenreFilter selected={genre} onSelect={setGenre} />
             </ThemedView>
           }
         />

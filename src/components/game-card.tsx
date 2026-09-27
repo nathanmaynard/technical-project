@@ -24,8 +24,8 @@ export function GameCard({ game }: { game: Game }) {
       <Image source={game.thumbnail} style={styles.thumbnail} />
 
       <View style={styles.details}>
-        <ThemedText type="smallBold" themeColor="textSecondary" style={styles.category}>
-          {game.category}
+        <ThemedText type="smallBold" themeColor="textSecondary" style={styles.genre}>
+          {game.genre}
         </ThemedText>
         <ThemedText type="default" style={styles.title}>
           {game.title}
@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
   details: {
     flex: 1,
   },
-  category: {
+  genre: {
     textTransform: 'uppercase',
   },
   title: {
